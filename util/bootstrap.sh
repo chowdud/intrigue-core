@@ -144,7 +144,9 @@ sudo apt-get -y --no-install-recommends install make \
   postgresql-client-12 \
   postgresql-server-dev-12 \
   postgresql-12-repack \
-  libpq-dev
+  libpq-dev \
+  xvfb \
+  libwebkit2gtk-4.0-37
 
 # Support older TLS ciphers
 sudo apt -y remove libcurl4
@@ -193,6 +195,10 @@ mv *.json data/gitrob
 rm gitrob_linux_amd64_3.4.1-beta.zip README.md
 cd $HOME
 
+# gitleaks
+echo "[+] Getting Gitleaks... "
+GO111MODULE=on go get github.com/zricethezav/gitleaks/v7
+
 # jarmscan
 echo "[+] Getting Jarmscan... "
 cd $HOME/bin
@@ -234,6 +240,12 @@ if [ ! -f /usr/bin/rdpscan ]; then
   cd ..
   rm -rf rdpscan
 fi
+
+# for rdp screenshots
+echo "[+] Getting Scrying... "
+wget https://github.com/nccgroup/scrying/releases/download/v0.9.0-alpha.2/scrying_0.9.0-alpha.2_amd64.deb
+sudo dpkg -i scrying_0.9.0-alpha.2_amd64.deb
+rm scrying_0.9.0-alpha.2_amd64.deb
 
 # subfinder 
 GO111MODULE=on go get -u -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder

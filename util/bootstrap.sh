@@ -6,12 +6,12 @@
 
 # if these are already set by our parent, use that.. otherwise sensible defaults
 if [ "$1" == "development" ]; then
-  echo "Dev Bootstrap Starting!"; 
+  echo "Dev Bootstrap Starting!";
   BOOTSTRAP_ENV=development
-else 
+else
   echo "Production Bootstrap Starting!";
   BOOTSTRAP_ENV=production
-fi 
+fi
 
 export INTRIGUE_DIRECTORY="${IDIR:=/home/$USER/core}"
 export RUBY_VERSION="${RUBY_VERSION:=2.7.2}"
@@ -144,13 +144,15 @@ sudo apt-get -y --no-install-recommends install make \
   postgresql-client-12 \
   postgresql-server-dev-12 \
   postgresql-12-repack \
-  libpq-dev
+  libpq-dev \
+  xvfb \
+  libwebkit2gtk-4.0-37
 
 # Support older TLS ciphers
 sudo apt -y remove libcurl4
 sudo apt -y install libcurl4-gnutls-dev
 
-# NOTE! for whatever reason, this has to be with apt vs apt-get 
+# NOTE! for whatever reason, this has to be with apt vs apt-get
 sudo apt -y install chromium-browser
 
 echo "[+] Creating a home for binaries"
@@ -192,6 +194,10 @@ mkdir data/gitrob
 mv *.json data/gitrob
 rm gitrob_linux_amd64_3.4.1-beta.zip README.md
 cd $HOME
+
+# gitleaks
+echo "[+] Getting Gitleaks... "
+GO111MODULE=on go get github.com/zricethezav/gitleaks/v7
 
 # jarmscan
 echo "[+] Getting Jarmscan... "
@@ -235,7 +241,13 @@ if [ ! -f /usr/bin/rdpscan ]; then
   rm -rf rdpscan
 fi
 
-# subfinder 
+# for rdp screenshots
+echo "[+] Getting Scrying... "
+wget https://github.com/nccgroup/scrying/releases/download/v0.9.0-alpha.2/scrying_0.9.0-alpha.2_amd64.deb
+sudo dpkg -i scrying_0.9.0-alpha.2_amd64.deb
+rm scrying_0.9.0-alpha.2_amd64.deb
+
+# subfinder
 GO111MODULE=on go get -u -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder
 
 ### Install latest tika
@@ -251,9 +263,9 @@ cd $HOME
 echo "[+] Updating Sudo configuration"
 if ! sudo grep -q NMAP /etc/sudoers; then
   echo "[+] Configuring sudo for nmap, masscan, rdpscan"
-  echo "Cmnd_Alias NMAP = /usr/local/bin/nmap" | sudo tee --append /etc/sudoers
-  echo "Cmnd_Alias MASSCAN = /usr/local/bin/masscan" | sudo tee --append /etc/sudoers
-  echo "Cmnd_Alias RDPSCAN = /usr/local/bin/rdpscan" | sudo tee --append /etc/sudoers
+  echo "Cmnd_Alias NMAP = /usr/bin/nmap" | sudo tee --append /etc/sudoers
+  echo "Cmnd_Alias MASSCAN = /usr/bin/masscan" | sudo tee --append /etc/sudoers
+  echo "Cmnd_Alias RDPSCAN = /usr/bin/rdpscan" | sudo tee --append /etc/sudoers
   echo "%admin ALL=(root) NOPASSWD: MASSCAN, NMAP, RDPSCAN" | sudo tee --append /etc/sudoers
 else
   echo "[+] nmap, masscan already configured to run as sudo"
@@ -293,7 +305,7 @@ sudo -u postgres createdb intrigue_dev --owner intrigue
 ##### Install rbenv
 if [ ! -d ~/.rbenv ]; then
   echo "[+] Installing & Configuring rbenv"
-  
+
   git clone https://github.com/rbenv/rbenv.git ~/.rbenv
   cd ~/.rbenv && src/configure && make -C src
   echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bash_profile
@@ -362,11 +374,11 @@ if [ "$BOOTSTRAP_ENV" == "production" ] && [ !$(grep -q intriguectl ~/.bash_prof
   # add welcome message
   echo "[+] Adding intrigue to path"
   ln -s ~/core/util/intriguectl ~/go/bin/intriguectl 2> /dev/null
-  
-  # always tell the user they have intriguectl 
+
+  # always tell the user they have intriguectl
   echo "intriguectl" >> ~/.bash_profile
 
 else
-  echo "echo \"CORE DEVELOPMENT ENVIRONMENT! Use foreman to manage services!\"" >> ~/.bash_profile  
+  echo "echo \"CORE DEVELOPMENT ENVIRONMENT! Use foreman to manage services!\"" >> ~/.bash_profile
 fi
 

@@ -18,6 +18,7 @@
   "sentry_dsn": null,
   "browser_enabled": true,
   "intrigue_task_log_location": "database",
+  "intrigue_task_log_level": "error",
   "intrigue_load_paths": [],
   "intrigue_handler_processing_wait_time": 60,
   "intrigue_notifiers": {
@@ -259,7 +260,7 @@
       "editable": "true",
       "comment": ""
     },
-    "gitrob_access_token": {
+    "github_access_token": {
       "value": "",
       "uri": "https://github.com/settings/tokens",
       "editable": "true",
@@ -355,15 +356,19 @@
       "editable": "true",
       "comment": ""
     },
-    "ipinfo_api_key": {
-      "value": "",
-      "uri": "https://ipinfo.io/developers",
-      "editable": "true",
-      "comment": ""
+    "ipdata_api_key": {
+      "value": "CHANGE_ME",
+      "uri": "api.ipdata.co"
     },
     "ipqs_api_key": {
       "value": "",
       "uri": "https://www.ipqualityscore.com/documentation/fraud-prevention-api-use-cases",
+      "editable": "true",
+      "comment": ""
+    },
+    "leak_lookup_api_key": {
+      "value": "",
+      "uri": "https://leak-lookup.com/api",
       "editable": "true",
       "comment": ""
     },
@@ -535,11 +540,18 @@
       "editable": "true",
       "comment": ""
     },
+    "zoomeye_api_key": {
+      "value": "",
+      "uri": "https://zoomeye.com/docs",
+      "editable": "true",
+      "comment": ""
+    },
     "zetalytics_api_key": {
       "value": "",
       "uri": "https://zetalytics.com/",
       "editable": "true",
       "comment": ""
     }
-  }
+  },
+  "redirect_issue_trigger_count": 10
 }
